@@ -2,14 +2,16 @@
 
 This a project solely coded in python, and it is meanh to be used to experiment 
 with modules, libraries (e.g. pytubefix, tkinter), and common coding practices.
-The software has only been tested on Windows 11.
+The software has only been tested on Windows 11, so the installation instructions
+are for Windows 11.
 
 ## Installation
 
 To get this project to work, you will need ffmpeg, an open-source software that 
 offers tools to manipulate multimedia, such as, videos, audios, streams, etc.
 Morover, you'll need to install the python library, pytubefix, to your virtual 
-environment.
+environment. The pytubefix library is used to download the videos/audios from 
+Youtube.
 
 ### Installing pytubefix
 
