@@ -1,4 +1,4 @@
-# TKinter Youtube Media Downloader Project
+# Youtube Media Downloader Project
 
 This a project solely coded in python, and it is meanh to be used to experiment 
 with modules, libraries (e.g. pytubefix, tkinter), and common coding practices.
