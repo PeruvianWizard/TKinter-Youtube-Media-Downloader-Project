@@ -8,8 +8,13 @@ The software has only been tested on Windows 11.
 
 To get this project to work, you will need ffmpeg, an open-source software that 
 offers tools to manipulate multimedia, such as, videos, audios, streams, etc.
-Morover, you'll need to install the python libraries, pytubefix and tkinter, to 
-your virtual environment.
+Morover, you'll need to install the python library, pytubefix, to your virtual 
+environment.
+
+### Installing pytubefix
+
+1. Open terminal in virtual environment
+2. Execute command, pip install pytubefix
 
 ### Installing ffmpeg
 
