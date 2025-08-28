@@ -9,7 +9,7 @@ are for Windows 11.
 
 To get this project to work, you will need ffmpeg, an open-source software that 
 offers tools to manipulate multimedia, such as, videos, audios, streams, etc.
-Morover, you'll need to install the python library, pytubefix, to your virtual 
+Moreover, you'll need to install the python library, pytubefix, to your virtual 
 environment. The pytubefix library is used to download the videos/audios from 
 Youtube.
 
