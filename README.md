@@ -11,7 +11,7 @@ offers tools to manipulate multimedia, such as, videos, audios, streams, etc.
 Morover, you'll need to install the python libraries, pytubefix and tkinter, to 
 your virtual environment.
 
-## Installing ffmpeg
+### Installing ffmpeg
 
 1. Go to https://ffmpeg.org/download.html
 2. Select Windows and then click on Windows builds by BtbN
