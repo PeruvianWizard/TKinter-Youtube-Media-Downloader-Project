@@ -6,7 +6,28 @@ from pytubefix import YouTube
 from pytubefix.cli import on_progress
 import subprocess
 import os
+from urllib.parse import urlparse
 
+# Checks if provided text is a valid URL. Returns true if URL is valid or false if otherwise
+def check_youtube_url(possible_url):
+    try:
+        is_url = urlparse(possible_url)
+        if all([is_url.scheme, is_url.netloc]):
+            if 'youtu.be' in possible_url or 'youtube.com' in possible_url:
+                return True
+            else:
+                return False
+        else:
+            return False
+    except ValueError:
+        return False
+
+# Returns youtube video title of provided url
+def media_title(url):
+    yt = YouTube(url)
+    return yt.title
+
+# Downloads media given url into Downloads folder
 def download_media(url, only_video=False, only_audio=False):
     yt = YouTube(url, on_progress_callback=on_progress)
 

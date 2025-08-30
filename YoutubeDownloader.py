@@ -6,40 +6,84 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
 import media_downloader
+from media_downloader import check_youtube_url
+
+# Dictionary
+recently_downloaded = {}
 
 # Function for download button
 def download_media():
-    url = str(link_entry.get())
+    # This line tells the interpreter that the function will be using the global variable recently_downloaded
+    global recently_downloaded
+    url = None
+
+    # Get the content from the combobox
+    content = str(recent_cbox.get())
     
+    # Attempt to get key if content is a previously downloaded song
+    found_url = recently_downloaded.get(content)
+    
+    # Decided whether content from combobox is an url or the name of a previosuly downloaded song
+    if check_youtube_url(content):
+        url = content
+    elif found_url != None:
+        url = found_url
+    else:
+        print("Name provided is not an url or recently downloaded media")  # Display this message to user as label or warning window
+        return
+
+    # Get title of song
+    song_title = media_downloader.media_title(url)
+    print(f"Media Title: {song_title}")
+    
+    # Download in MP3 or MP4 format based on user choice
+    progress_bar.start()
     if str(media_type.get()) == "MP4":
         media_downloader.download_media(url)
     else:
         media_downloader.download_media(url, only_audio=True)
-    tk.Label(root, text="Video/Audio downloaded successfully!", fg="Red").grid(row=3, column=1)
+    progress_bar.stop()
 
+    # Add the song title with its url to the beginning of the recently_donwloaded dictionary
+    recently_downloaded = {**{song_title: url}, **recently_downloaded}
+
+    # Set the recent_cbox values equal to the recently_downloaded keys
+    recent_cbox['values'] = list(recently_downloaded.keys())
+
+    # Successful download label
+    success = tk.Label(root, text="Media downloaded successfully!", fg="Red")
+    success.grid(row=3, column=1)
+    root.after(3000, success.destroy)
+    
 root = tk.Tk()
 root.title("YouTube Downloader")
 root.geometry("600x300")
 
-# Font and Label
+# Youtube label
 font = tkFont.Font(family="Arial", size=20)
 main_lb = tk.Label(root, text="YouTube Downloader", font=font)
 main_lb.grid(row=0, column=1, sticky=tk.NSEW, pady=30)
 
-# Another Label
+# Link label
 link_lb = tk.Label(root, text="Link: ")
 link_lb.grid(row=1, column=0)
 
-# Entry
-link_entry = tk.Entry(root)
-link_entry.grid(row=1, column=1, sticky=tk.NSEW)
-link_entry.focus()
+# Progress bar to display until download is completed
+progress_bar = ttk.Progressbar(root, orient='horizontal', mode='indeterminate', length=200)
+progress_bar.grid(row=3, column=1)
+progress_bar.grid_remove()
 
-# Combobox
+# Combobox where url will be entered or names will be selected
+recent_cbox = ttk.Combobox(root, values=list(recently_downloaded.keys()))
+recent_cbox.grid(row=1, column=1, sticky=tk.NSEW)
+recent_cbox.focus()
+
+# Combobox to choose type of media
 media_type = ttk.Combobox(root, values=["MP3", "MP4"], state="readonly", width=4)
 media_type.grid(row=1, column=2)
+media_type.set("MP4")
 
-# Button
+# Download button
 b1 = tk.Button(root, text="Download", command=download_media, height=2, width=15)
 b1.grid(row=2, column=1, pady = 30)
 
