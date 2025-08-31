@@ -5,11 +5,15 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
-import media_downloader
-from media_downloader import check_youtube_url
+import media_manager
 
-# Dictionary
-recently_downloaded = {}
+# Limit for recently downloaded media dictionary
+RECENT_LIMIT = 10
+
+# Dictionary to hold recently downloaded media.
+# Restores from backup is there is any. Else, the function returns an empty dicitonary.
+recently_downloaded = media_manager.restore_backup()
+
 
 # Function for download button
 def download_media():
@@ -24,7 +28,7 @@ def download_media():
     found_url = recently_downloaded.get(content)
     
     # Decided whether content from combobox is an url or the name of a previosuly downloaded song
-    if check_youtube_url(content):
+    if media_manager.check_youtube_url(content):
         url = content
     elif found_url != None:
         url = found_url
@@ -33,19 +37,23 @@ def download_media():
         return
 
     # Get title of song
-    song_title = media_downloader.media_title(url)
+    song_title = media_manager.media_title(url)
     print(f"Media Title: {song_title}")
     
     # Download in MP3 or MP4 format based on user choice
-    progress_bar.start()
+    progress_bar.start(interval=9)
     if str(media_type.get()) == "MP4":
-        media_downloader.download_media(url)
+        media_manager.download_media(url)
     else:
-        media_downloader.download_media(url, only_audio=True)
+        media_manager.download_media(url, only_audio=True)
     progress_bar.stop()
 
     # Add the song title with its url to the beginning of the recently_donwloaded dictionary
     recently_downloaded = {**{song_title: url}, **recently_downloaded}
+
+    # Pop the last element of the recently downloaded dictionary if it goes over the limit.
+    if len(recently_downloaded) > RECENT_LIMIT:
+        recently_downloaded.popitem()
 
     # Set the recent_cbox values equal to the recently_downloaded keys
     recent_cbox['values'] = list(recently_downloaded.keys())
@@ -54,7 +62,7 @@ def download_media():
     success = tk.Label(root, text="Media downloaded successfully!", fg="Red")
     success.grid(row=3, column=1)
     root.after(3000, success.destroy)
-    
+
 root = tk.Tk()
 root.title("YouTube Downloader")
 root.geometry("600x300")
@@ -93,3 +101,8 @@ root.grid_columnconfigure(2, weight=1)
 
 if __name__ == '__main__':
     root.mainloop()
+
+    # Backup the recently_downloaded list from current session to be used in the next one.
+    # Backup from previous session will get overwritten.
+    if len(recently_downloaded) != 0:
+        media_manager.download_backup(recently_downloaded)

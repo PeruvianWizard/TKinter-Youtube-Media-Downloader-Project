@@ -4,9 +4,31 @@
 
 from pytubefix import YouTube
 from pytubefix.cli import on_progress
+from urllib.parse import urlparse
 import subprocess
 import os
-from urllib.parse import urlparse
+import _pickle
+
+# function to back up dictionary into text file
+def download_backup(dic):
+    try:
+        with open("media_urls.txt", "wb") as urls_save:
+            _pickle.dump(dic, urls_save)
+            print("BACKUP_CREATION_SUCCESS: Backup created successfully.")
+    except Exception:
+        print("BACKUP_CREATION_FAILURE: Backup could not be created.")
+
+# function to restore backup from text file
+def restore_backup():
+    dic = {}
+    try:
+        with open("media_urls.txt", "rb") as urls_open:
+            dic = _pickle.load(urls_open)
+            print("BACKUP_RESTORATION_SUCCESS: Backup restored successfully.")
+            return dic
+    except Exception:
+        print("BACKUP_RESTORATION_FAILURE: There is no backup to restore.")
+        return {}
 
 # Checks if provided text is a valid URL. Returns true if URL is valid or false if otherwise
 def check_youtube_url(possible_url):
