@@ -64,6 +64,7 @@ root = tk.Tk()
 root.title("YouTube Downloader")
 root.geometry("600x300")
 
+
 # Youtube label
 main_lb = ttk.Label(root, text="YouTube Downloader", font=("Arial", 20))
 main_lb.grid(row=0, column=1, sticky=tk.NS, pady=30)
@@ -78,7 +79,7 @@ recent_cbox.grid(row=1, column=1, sticky=tk.NSEW)
 recent_cbox.focus()
 
 # Combobox to choose type of media
-media_type = ttk.Combobox(root, values=["MP3", "MP4"], state="readonly", width=4)
+media_type = ttk.Combobox(root, values=["M4A", "MP4"], state="readonly", width=4)
 media_type.grid(row=1, column=2)
 media_type.set("MP4")
 

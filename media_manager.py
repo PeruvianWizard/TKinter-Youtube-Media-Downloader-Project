@@ -60,16 +60,16 @@ def download_media(url, only_video=False, only_audio=False):
     elif only_audio:
         print("Downloading audio...")
         ys = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
-        ys.download(filename=yt.title +'.mp3', output_path=os.path.expanduser("~")+"/Downloads")
+        ys.download(filename=yt.title +'.m4a', output_path=os.path.expanduser("~")+"/Downloads")
     else:
         print("Downloading video with audio...")
         video_path = os.path.abspath(yt.title+'.mp4')
-        audio_path = os.path.abspath(yt.title+'.mp3')
+        audio_path = os.path.abspath(yt.title+'.m4a')
         output_path = os.path.join(os.path.expanduser("~"), "Downloads", yt.title + '.mp4')
         ys = yt.streams.get_highest_resolution(False)
         ys.download(filename=yt.title+'.mp4')
         ys = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
-        ys.download(filename=yt.title+'.mp3')
+        ys.download(filename=yt.title+'.m4a')
 
         subprocess.run([
             'ffmpeg', 
