@@ -4,7 +4,6 @@
 
 import tkinter as tk
 from tkinter import ttk
-import tkinter.font as tkFont
 import media_manager
 
 # Limit for recently downloaded media dictionary
@@ -13,7 +12,6 @@ RECENT_LIMIT = 10
 # Dictionary to hold recently downloaded media.
 # Restores from backup is there is any. Else, the function returns an empty dicitonary.
 recently_downloaded = media_manager.restore_backup()
-
 
 # Function for download button
 def download_media():
@@ -41,12 +39,10 @@ def download_media():
     print(f"Media Title: {song_title}")
     
     # Download in MP3 or MP4 format based on user choice
-    progress_bar.start(interval=9)
     if str(media_type.get()) == "MP4":
         media_manager.download_media(url)
     else:
         media_manager.download_media(url, only_audio=True)
-    progress_bar.stop()
 
     # Add the song title with its url to the beginning of the recently_donwloaded dictionary
     recently_downloaded = {**{song_title: url}, **recently_downloaded}
@@ -63,23 +59,18 @@ def download_media():
     success.grid(row=3, column=1)
     root.after(3000, success.destroy)
 
+# Main Window
 root = tk.Tk()
 root.title("YouTube Downloader")
 root.geometry("600x300")
 
 # Youtube label
-font = tkFont.Font(family="Arial", size=20)
-main_lb = tk.Label(root, text="YouTube Downloader", font=font)
-main_lb.grid(row=0, column=1, sticky=tk.NSEW, pady=30)
+main_lb = ttk.Label(root, text="YouTube Downloader", font=("Arial", 20))
+main_lb.grid(row=0, column=1, sticky=tk.NS, pady=30)
 
 # Link label
-link_lb = tk.Label(root, text="Link: ")
-link_lb.grid(row=1, column=0)
-
-# Progress bar to display until download is completed
-progress_bar = ttk.Progressbar(root, orient='horizontal', mode='indeterminate', length=200)
-progress_bar.grid(row=3, column=1)
-progress_bar.grid_remove()
+link_lb = ttk.Label(root, text="Link: ", font=("Arial", 12))
+link_lb.grid(row=1, column=0, sticky=tk.NS)
 
 # Combobox where url will be entered or names will be selected
 recent_cbox = ttk.Combobox(root, values=list(recently_downloaded.keys()))
@@ -92,8 +83,8 @@ media_type.grid(row=1, column=2)
 media_type.set("MP4")
 
 # Download button
-b1 = tk.Button(root, text="Download", command=download_media, height=2, width=15)
-b1.grid(row=2, column=1, pady = 30)
+download_button = ttk.Button(root, text="Download", command=download_media, padding=(15,18))
+download_button.grid(row=2, column=1, pady = 30)
 
 root.grid_columnconfigure(0, weight=1)
 root.grid_columnconfigure(1, weight=1)
