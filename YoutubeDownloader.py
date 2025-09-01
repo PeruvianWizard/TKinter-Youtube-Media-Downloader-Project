@@ -33,19 +33,25 @@ def download_media():
     else:
         print("Name provided is not an url or recently downloaded media")  # Display this message to user as label or warning window
         return
-
-    # Get title of song
-    song_title = media_manager.media_title(url)
-    print(f"Media Title: {song_title}")
     
-    # Download in MP3 or MP4 format based on user choice
-    if str(media_type.get()) == "MP4":
-        media_manager.download_media(url)
-    else:
-        media_manager.download_media(url, only_audio=True)
+    # Download in M4A or MP4 format based on user choice and store returned media name
+    # TO-DO: Implement option to download playlists
+    try:
+        if is_playlist.get():
+            media_name = media_manager.download_playlist(url, format=str(media_type.get()))
+            is_playlist.set(False)
+        else:
+            media_name = media_manager.download_media(url, format=str(media_type.get()))
+    except Exception:
+        result_lb.config(text="ERROR: Problem trying to download media/playlist.")
+        result_lb.grid(row=3, column=1)
+        root.after(3000, result_lb.destroy)
+        return
 
-    # Add the song title with its url to the beginning of the recently_donwloaded dictionary
-    recently_downloaded = {**{song_title: url}, **recently_downloaded}
+    print(f"Media Title: {media_name}")
+
+    # Add the media title with its url to the beginning of the recently_donwloaded dictionary
+    recently_downloaded = {**{media_name: url}, **recently_downloaded}
 
     # Pop the last element of the recently downloaded dictionary if it goes over the limit.
     if len(recently_downloaded) > RECENT_LIMIT:
@@ -54,16 +60,15 @@ def download_media():
     # Set the recent_cbox values equal to the recently_downloaded keys
     recent_cbox['values'] = list(recently_downloaded.keys())
 
-    # Successful download label
-    success = tk.Label(root, text="Media downloaded successfully!", fg="Red")
-    success.grid(row=3, column=1)
-    root.after(3000, success.destroy)
+    # Display result label
+    result_lb.config(text="Media downloaded successfully!")
+    result_lb.grid(row=3, column=1)
+    root.after(3000, result_lb.destroy)
 
 # Main Window
 root = tk.Tk()
 root.title("YouTube Downloader")
 root.geometry("600x300")
-
 
 # Youtube label
 main_lb = ttk.Label(root, text="YouTube Downloader", font=("Arial", 20))
@@ -82,6 +87,14 @@ recent_cbox.focus()
 media_type = ttk.Combobox(root, values=["M4A", "MP4"], state="readonly", width=4)
 media_type.grid(row=1, column=2)
 media_type.set("MP4")
+
+# Playlist checkbox
+is_playlist = tk.BooleanVar()
+pl_checkbox = ttk.Checkbutton(root, text="playlist?", variable=is_playlist)
+pl_checkbox.grid(row=2, column=2, sticky=tk.N, pady=5)
+
+# Result Label
+result_lb = tk.Label(root, fg="Red")
 
 # Download button
 download_button = ttk.Button(root, text="Download", command=download_media, padding=(15,18))

@@ -3,6 +3,7 @@
 # It may be used however you want as long as it doesn't break a law.
 
 from pytubefix import YouTube
+from pytubefix import Playlist
 from pytubefix.cli import on_progress
 from urllib.parse import urlparse
 import subprocess
@@ -44,20 +45,17 @@ def check_youtube_url(possible_url):
     except ValueError:
         return False
 
-# Returns youtube video title of provided url
-def media_title(url):
-    yt = YouTube(url)
-    return yt.title
+# Downloads media given url into Downloads folder and returns name of downloaded media
+def download_media(url, format=''):
+    valid_formats = ['M4A', 'MP4']
 
-# Downloads media given url into Downloads folder
-def download_media(url, only_video=False, only_audio=False):
+    # Check that correct format was passed as argument
+    if format not in valid_formats:
+        raise ValueError(f"Invalid format. Choose from: {valid_formats}")
+
     yt = YouTube(url, on_progress_callback=on_progress)
 
-    if only_video:
-        print("Downloading video...")
-        ys = yt.streams.get_highest_resolution(False)
-        ys.download(filename=yt.title+'.mp4')
-    elif only_audio:
+    if format == 'M4A':
         print("Downloading audio...")
         ys = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
         ys.download(filename=yt.title +'.m4a', output_path=os.path.expanduser("~")+"/Downloads")
@@ -83,3 +81,21 @@ def download_media(url, only_video=False, only_audio=False):
 
         os.remove(video_path)
         os.remove(audio_path)
+
+        return yt.title
+
+# Dowloads a playlist by iterating through each url in a playlist and downloads them one by one
+# Uses the download_media function above
+def download_playlist(url, format=''):
+    valid_formats = ['M4A', 'MP4']
+
+    # Check that correct format was passed as argument
+    if format not in valid_formats:
+        raise ValueError(f"Invalid format. Choose from: {valid_formats}")
+    
+    play_list = Playlist(url)
+
+    for link in play_list.video_urls:
+        download_media(link, format=format)
+
+    return play_list.owner + " Playlist"
