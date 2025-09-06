@@ -10,7 +10,7 @@ import subprocess
 import os
 import _pickle
 
-# function to back up dictionary into text file
+# Backs up dictionary with recent downloads into text file
 def download_backup(dic):
     try:
         with open("media_urls.txt", "wb") as urls_save:
@@ -19,7 +19,7 @@ def download_backup(dic):
     except Exception:
         print("BACKUP_CREATION_FAILURE: Backup could not be created.")
 
-# function to restore backup from text file
+# Restore backup from text file
 def restore_backup():
     dic = {}
     try:
@@ -38,10 +38,7 @@ def check_youtube_url(possible_url):
         if all([is_url.scheme, is_url.netloc]):
             if 'youtu.be' in possible_url or 'youtube.com' in possible_url:
                 return True
-            else:
-                return False
-        else:
-            return False
+        return False
     except ValueError:
         return False
 
@@ -54,6 +51,7 @@ def download_media(url, format=''):
         raise ValueError(f"Invalid format. Choose from: {valid_formats}")
 
     yt = YouTube(url, on_progress_callback=on_progress)
+    #yt = YouTube(url, on_progress_callback=on_progress, proxies={"http": proxy, "https": proxy})
 
     if format == 'M4A':
         print("Downloading audio...")

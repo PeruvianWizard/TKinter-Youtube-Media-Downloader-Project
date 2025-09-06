@@ -13,11 +13,16 @@ RECENT_LIMIT = 10
 # Restores from backup is there is any. Else, the function returns an empty dicitonary.
 recently_downloaded = media_manager.restore_backup()
 
+# Download to set the download_status_label text based on the state of the download
+def set_download_status_label(text=''):
+    download_status_label.config(text=text)
+    download_status_label.grid(row=3, column=1)
+    root.after(3000, download_status_label.destroy)
+
 # Function for download button
 def download_media():
     # This line tells the interpreter that the function will be using the global variable recently_downloaded
     global recently_downloaded
-    url = None
 
     # Get the content from the combobox
     content = str(recent_cbox.get())
@@ -25,17 +30,16 @@ def download_media():
     # Attempt to get key if content is a previously downloaded song
     found_url = recently_downloaded.get(content)
     
-    # Decided whether content from combobox is an url or the name of a previosuly downloaded song
+    # Checks whether content from combobox is an url or the name of a previosuly downloaded song
     if media_manager.check_youtube_url(content):
         url = content
     elif found_url != None:
         url = found_url
     else:
-        print("Name provided is not an url or recently downloaded media")  # Display this message to user as label or warning window
+        set_download_status_label(text="Name provided is not an url or recently downloaded media")
         return
     
     # Download in M4A or MP4 format based on user choice and store returned media name
-    # TO-DO: Implement option to download playlists
     try:
         if is_playlist.get():
             media_name = media_manager.download_playlist(url, format=str(media_type.get()))
@@ -43,16 +47,12 @@ def download_media():
         else:
             media_name = media_manager.download_media(url, format=str(media_type.get()))
     except Exception:
-        result_lb.config(text="ERROR: Problem trying to download media/playlist.")
-        result_lb.grid(row=3, column=1)
-        root.after(3000, result_lb.destroy)
+        set_download_status_label(text="ERROR: Problem trying to download media/playlist.")
         return
-
-    print(f"Media Title: {media_name}")
 
     # Add the media title with its url to the beginning of the recently_donwloaded dictionary
     recently_downloaded = {**{media_name: url}, **recently_downloaded}
-
+    
     # Pop the last element of the recently downloaded dictionary if it goes over the limit.
     if len(recently_downloaded) > RECENT_LIMIT:
         recently_downloaded.popitem()
@@ -61,9 +61,7 @@ def download_media():
     recent_cbox['values'] = list(recently_downloaded.keys())
 
     # Display result label
-    result_lb.config(text="Media downloaded successfully!")
-    result_lb.grid(row=3, column=1)
-    root.after(3000, result_lb.destroy)
+    set_download_status_label(text="Media downloaded successfully!")
 
 # Main Window
 root = tk.Tk()
@@ -94,11 +92,11 @@ pl_checkbox = ttk.Checkbutton(root, text="playlist?", variable=is_playlist)
 pl_checkbox.grid(row=2, column=2, sticky=tk.N, pady=5)
 
 # Result Label
-result_lb = tk.Label(root, fg="Red")
+download_status_label = ttk.Label(root, foreground="Red", wraplength=275, justify="center")
 
 # Download button
 download_button = ttk.Button(root, text="Download", command=download_media, padding=(15,18))
-download_button.grid(row=2, column=1, pady = 30)
+download_button.grid(row=2, column=1, pady = 25)
 
 root.grid_columnconfigure(0, weight=1)
 root.grid_columnconfigure(1, weight=1)
