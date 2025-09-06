@@ -51,7 +51,6 @@ def download_media(url, format=''):
         raise ValueError(f"Invalid format. Choose from: {valid_formats}")
 
     yt = YouTube(url, on_progress_callback=on_progress)
-    #yt = YouTube(url, on_progress_callback=on_progress, proxies={"http": proxy, "https": proxy})
 
     if format == 'M4A':
         print("Downloading audio...")
